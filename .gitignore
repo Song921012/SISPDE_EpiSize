@@ -1,0 +1,4 @@
+*.dll
+Manifest.toml
+LocalPreferences.toml
+*.pdf
