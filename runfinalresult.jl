@@ -33,6 +33,19 @@ vartype = "I"
 @time epiresultI = episingle!(prob, vartype, Ilim, p, n);
 plotdI(Ilim, epiresultI, vartype)
 
+
+##
+# Monontone of BRN
+Ilim = Dict("min" => 2.0, "max" => 50.0, "len" => 100)
+vartype = "R"
+@time epiresultI = episingle!(prob, vartype, Ilim, p, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+plot(I_range, epiresultI, label=L"Epidemic size of $c$")
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"$c$ (basic reproduction number in homogenous environment)")
+ylabel!("Epidemic size")
+savefig("./output/case1/epibrn.png")
+
 ##
 # Level Set of (dS,dI)
 Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
@@ -176,8 +189,21 @@ A1_value = A1(τ, brn)
 A2_value = A2(τ, brn)
 A3_value = A3(τ, brn)
 println("Parameter values: A1: $A1_value; A2: $A2_value; A3: $A3_value")
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
 plot(I_range, epiresultI, label=L"Epidemic size($d_{S}\rightarrow 0$)")
 #title!(L"Epidemic size of $d_{S}$")
 xlabel!(L"\epsilon")
 ylabel!(L"Epidemic size($d_{S}\rightarrow 0$)")
 savefig("./output/case1/dSlim.png")
+
+##
+p = [0.1, 1.0, brn, ϵ]
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 100)
+vartype = "fixtS"
+@time epiresultI = episingle!(prob, vartype, Ilim, p, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+plot(I_range, epiresultI, label="Epidemic size")
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"\ln(d_{I})")
+ylabel!("Epidemic size")
+savefig("./output/case1/dSmonchange.png")
