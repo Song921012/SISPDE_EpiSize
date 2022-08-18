@@ -1,4 +1,5 @@
 using DifferentialEquations, ModelingToolkit, MethodOfLines, DomainSets, Plots, NLsolve
+using NonlinearSolve
 using Integrals
 using QuadGK
 using LaTeXStrings
@@ -35,6 +36,133 @@ function probgeneration!(ratio::Function, γ::Function, initS::Function, initI::
     # Convert the PDE problem into an ODE problem
     prob = discretize(pdesys, discretization)
     return prob
+end
+
+# ds to infinity
+function sinfprobgeneration!(ratio::Function, γ::Function, initI::Function, dx=0.05)
+    # Parameters, variables, and derivatives
+    @parameters t x
+    #@register γ(x)
+    @parameters dI brn ϵ
+    @variables w(..)
+    Dt = Differential(t)
+    Dx = Differential(x)
+    Dxx = Differential(x)^2
+    # 1D PDE and boundary conditions
+    eq = Dt(w(t, x)) ~ dI * Dxx(w(t, x)) + γ(x) * (ratio(x, brn, ϵ) - 1 - ratio(x, brn, ϵ) * w(t, x) / (1 + w(t, x)))
+    bcs = [w(0, x) ~ initI(x),
+        Dx(w(t, 0)) ~ 0.0,
+        Dx(w(t, 1)) ~ 0.0]
+    # Space and time domains
+    domains = [t ∈ Interval(0.0, 5.0),
+        x ∈ Interval(0.0, 1.0)]
+    # PDE system
+    @named pdesys = PDESystem(eq, bcs, domains, [t, x], [w(t, x)], [dI => 0.1, brn => 3.0, ϵ => 1.0])
+    # Method of lines discretization
+    # Need a small dx here for accuracy
+    #order = 2
+    discretization = MOLFiniteDifference([x => dx], t)
+    # Convert the PDE problem into an ODE problem
+    prob = discretize(pdesys, discretization)
+    return prob
+end
+
+function sinfepisize!(prob::ODEProblem, p, n::Int64)
+    newprob = remake(prob, p=p)
+    steadystateprob = SteadyStateProblem(newprob)
+    state = solve(steadystateprob, DynamicSS(Rodas5())) # Rodas5, Tsit5
+    y = sum(state[1:end]) / (n - 1)
+    z = y / (1 + y)
+    return z
+end
+
+function sinfepisingle!(prob::ODEProblem, vartype::String, Ilim::Dict, p=[0.1, 3.0, 0.1], n::Int64=20)
+    N_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+    N_len = Ilim["len"]
+    di, brn, ϵ = p
+    episize_vector = zeros(N_len)
+    if vartype == "I" # di
+        Threads.@threads for j in 1:N_len
+            para = [exp(N_range[j]), brn, ϵ]
+            @inbounds episize_vector[j] = sinfepisize!(prob, para, n)
+        end
+    elseif vartype == "E" # ϵ
+        Threads.@threads for j in 1:N_len
+            para = [di, brn, N_range[j]]
+            @inbounds episize_vector[j] = sinfepisize!(prob, para, n)
+        end
+    elseif vartype == "R" # brn
+        Threads.@threads for j in 1:N_len
+            para = [di, N_range[j], ϵ]
+            @inbounds episize_vector[j] = sinfepisize!(prob, para, n)
+        end
+    else
+        println("Error! Vartype shoud be one of I E R")
+    end
+    return episize_vector
+end
+
+# di to infinity
+function iinfprobgeneration!(ratio::Function, γ::Function, initS::Function, dx=0.05)
+    # Parameters, variables, and derivatives
+    @parameters t x
+    #@register γ(x)
+    @parameters dS brn ϵ
+    @variables S(..)
+    Dt = Differential(t)
+    Dx = Differential(x)
+    Dxx = Differential(x)^2
+    # 1D PDE and boundary conditions
+    eq = Dt(S(t, x)) ~ dS * Dxx(S(t, x)) + γ(x) - ratio(x, brn, ϵ) * γ(x) * S(t, x) / (1 + S(t, x))
+    bcs = [S(0, x) ~ initS(x),
+        Dx(S(t, 0)) ~ 0.0,
+        Dx(S(t, 1)) ~ 0.0]
+    # Space and time domains
+    domains = [t ∈ Interval(0.0, 5.0),
+        x ∈ Interval(0.0, 1.0)]
+    # PDE system
+    @named pdesys = PDESystem(eq, bcs, domains, [t, x], [S(t, x)], [dS => 0.1, brn => 3.0, ϵ => 1.0])
+    # Method of lines discretization
+    # Need a small dx here for accuracy
+    #order = 2
+    discretization = MOLFiniteDifference([x => dx], t)
+    # Convert the PDE problem into an ODE problem
+    prob = discretize(pdesys, discretization)
+    return prob
+end
+function iinfepisize!(prob::ODEProblem, p, n::Int64)
+    newprob = remake(prob, p=p)
+    steadystateprob = SteadyStateProblem(newprob)
+    state = solve(steadystateprob, DynamicSS(Rodas5())) # Rodas5, Tsit5
+    y = sum(state[1:end]) / (n - 1)
+    z = 1 / (1 + y)
+    return z
+end
+
+function iinfepisingle!(prob::ODEProblem, vartype::String, Ilim::Dict, p=[0.1, 3.0, 0.1], n::Int64=20)
+    N_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+    N_len = Ilim["len"]
+    ds, brn, ϵ = p
+    episize_vector = zeros(N_len)
+    if vartype == "S" # di
+        Threads.@threads for j in 1:N_len
+            para = [exp(N_range[j]), brn, ϵ]
+            @inbounds episize_vector[j] = iinfepisize!(prob, para, n)
+        end
+    elseif vartype == "E" # ϵ
+        Threads.@threads for j in 1:N_len
+            para = [ds, brn, N_range[j]]
+            @inbounds episize_vector[j] = iinfepisize!(prob, para, n)
+        end
+    elseif vartype == "R" # brn
+        Threads.@threads for j in 1:N_len
+            para = [ds, N_range[j], ϵ]
+            @inbounds episize_vector[j] = iinfepisize!(prob, para, n)
+        end
+    else
+        println("Error! Vartype shoud be one of S E R")
+    end
+    return episize_vector
 end
 # Main functions calculateing epidemic size
 function episize!(prob::ODEProblem, p, n::Int64)
@@ -210,6 +338,16 @@ function integralf(f::Function)
 end
 
 
+
+
+
+
+
+
+
+
+
+
 function γ(x)
     y = 1.0
     return y
@@ -230,12 +368,23 @@ function ratio(x, brn, ϵ)
     return y
 end
 prob = probgeneration!(ratio, γ, initS, initI, dx)
+probsinf = sinfprobgeneration!(ratio, γ, initI, dx)
+probiinf = iinfprobgeneration!(ratio, γ, initS, dx)
 brn = 3.0
 ϵ = 2.0
 p = [1.0, 1.0, brn, ϵ]
+psinf = [1.0, brn, ϵ]
+piinf = [1.0, brn, ϵ]
 
 @time episize!(prob, p, n);
+@time sinfepisize!(probsinf, psinf, n);
+@time iinfepisize!(probiinf, piinf, n);
 Ilim = Dict("min" => -5.0, "max" => 5.0, "len" => 50)
 vartype = "I"
 @time epiresultI = episingle!(prob, vartype, Ilim, p, n);
-plotdI(Ilim, epiresultI, vartype)
+display(plotdI(Ilim, epiresultI, vartype))
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+display(plotdI(Ilim, epiresultI, vartype))
+vartype = "S"
+@time epiresultI = iinfepisingle!(probiinf, vartype, Ilim, piinf, n);
+display(plotdI(Ilim, epiresultI, vartype))

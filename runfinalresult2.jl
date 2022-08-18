@@ -53,6 +53,23 @@ savefig("./output/case2/levelsi2.png")
 
 
 ##
+# test
+# Level Set of (dS,dI)
+Ilim = Dict("min" => -6.0, "max" => 3.0, "len" => 100)
+Slim = Dict("min" => -15.0, "max" => -5.0, "len" => 100)
+leveltype = "SI"
+@time epiresultSI = levelset(prob, leveltype, Slim, Ilim, p, n);
+#@save "./output/case1/levelsi1.bson" epiresultSI
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+S_range = range(Slim["min"], Slim["max"], length=Slim["len"])
+nlevels = 600
+contour(I_range, S_range, epiresultSI, levels=nlevels,lw=4, contour_labels=true)
+xlabel!(L"\ln(d_{I})")
+ylabel!(L"\ln(d_{S})")
+title!(L"Level set of $(d_{S},d_{I})$")
+#savefig("./output/case1/levelsi1.png")
+
+##
 # Level Set of (dI,tau)
 Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
 Slim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
