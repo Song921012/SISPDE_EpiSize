@@ -49,7 +49,7 @@ function sinfprobgeneration!(ratio::Function, γ::Function, initI::Function, dx=
     Dx = Differential(x)
     Dxx = Differential(x)^2
     # 1D PDE and boundary conditions
-    eq = Dt(w(t, x)) ~ dI * Dxx(w(t, x)) + γ(x) * (ratio(x, brn, ϵ) - 1 - ratio(x, brn, ϵ) * w(t, x) / (1 + w(t, x)))
+    eq = Dt(w(t, x)) ~ dI * Dxx(w(t, x)) + γ(x)* w(t, x) * (ratio(x, brn, ϵ) - 1 - ratio(x, brn, ϵ) * w(t, x) / (1 + w(t, x)))
     bcs = [w(0, x) ~ initI(x),
         Dx(w(t, 0)) ~ 0.0,
         Dx(w(t, 1)) ~ 0.0]

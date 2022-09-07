@@ -2,7 +2,7 @@
 include("./src/functions.jl")
 
 ## 
-# Case one
+# Case three
 function γ(x)
     y = 1.0
     return y
@@ -23,16 +23,38 @@ function ratio(x, brn, ϵ)
     return y
 end
 prob = probgeneration!(ratio, γ, initS, initI, dx)
+probsinf = sinfprobgeneration!(ratio, γ, initI, dx)
+probiinf = iinfprobgeneration!(ratio, γ, initS, dx)
 brn = 3.0
 ϵ = 2.0
 p = [1.0, 1.0, brn, ϵ]
+psinf = [1.0, brn, ϵ]
+piinf = [1.0, brn, ϵ]
 
 @time episize!(prob, p, n);
+@time sinfepisize!(probsinf, psinf, n);
+@time iinfepisize!(probiinf, piinf, n);
 Ilim = Dict("min" => -5.0, "max" => 5.0, "len" => 50)
 vartype = "I"
 @time epiresultI = episingle!(prob, vartype, Ilim, p, n);
-plotdI(Ilim, epiresultI, vartype)
+display(plotdI(Ilim, epiresultI, vartype))
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+display(plotdI(Ilim, epiresultI, vartype))
+vartype = "S"
+@time epiresultI = iinfepisingle!(probiinf, vartype, Ilim, piinf, n);
+display(plotdI(Ilim, epiresultI, vartype))
 
+##
+# ds to infinity
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "I"
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+plot(I_range, epiresultI, label=L"Epidemic size of $d_{I}$ as $d_{S} \rightarrow \infty$")
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"\ln(d_{I})")
+ylabel!("Epidemic size")
+savefig("./output/case3/sinfepidi.png")
 
 ##
 # Level Set of (dS,dI)
@@ -94,7 +116,7 @@ savefig("./output/case3/levelte3.png")
 
 
 ## 
-# Case one
+# Case Four
 function γ(x)
     y = 1.0
     return y
@@ -115,15 +137,38 @@ function ratio(x, brn, ϵ)
     return y
 end
 prob = probgeneration!(ratio, γ, initS, initI, dx)
+probsinf = sinfprobgeneration!(ratio, γ, initI, dx)
+probiinf = iinfprobgeneration!(ratio, γ, initS, dx)
 brn = 3.0
 ϵ = 2.0
 p = [1.0, 1.0, brn, ϵ]
+psinf = [1.0, brn, ϵ]
+piinf = [1.0, brn, ϵ]
 
 @time episize!(prob, p, n);
+@time sinfepisize!(probsinf, psinf, n);
+@time iinfepisize!(probiinf, piinf, n);
 Ilim = Dict("min" => -5.0, "max" => 5.0, "len" => 50)
 vartype = "I"
 @time epiresultI = episingle!(prob, vartype, Ilim, p, n);
-plotdI(Ilim, epiresultI, vartype)
+display(plotdI(Ilim, epiresultI, vartype))
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+display(plotdI(Ilim, epiresultI, vartype))
+vartype = "S"
+@time epiresultI = iinfepisingle!(probiinf, vartype, Ilim, piinf, n);
+display(plotdI(Ilim, epiresultI, vartype))
+
+##
+# ds to infinity
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "I"
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+plot(I_range, epiresultI, label=L"Epidemic size of $d_{I}$ as $d_{S} \rightarrow \infty$")
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"\ln(d_{I})")
+ylabel!("Epidemic size")
+savefig("./output/case4/sinfepidi.png")
 
 
 ##
@@ -153,3 +198,18 @@ plot(I_range, epiresultI, label="Epidemic size")
 xlabel!(L"\ln(d_{I})")
 ylabel!("Epidemic size")
 savefig("./output/case4/dSmonchange4.png")
+
+
+# Case 5
+##
+
+# ds to infinity
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "I"
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+plot(I_range, epiresultI, label=L"Epidemic size of $d_{I}$ as $d_{S} \rightarrow \infty$")
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"\ln(d_{I})")
+ylabel!("Epidemic size")
+savefig("./output/case1/sinfepidi.png")
