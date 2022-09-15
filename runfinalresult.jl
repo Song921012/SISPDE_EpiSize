@@ -1,5 +1,5 @@
 ##
-include("./src/functions.jl")
+@time include("./src/functions.jl")
 
 ## 
 # Case one
@@ -29,7 +29,7 @@ brn = 3.0
 ϵ = 2.0
 p = [1.0, 1.0, brn, ϵ]
 psinf = [1.0, brn, ϵ]
-piinf = [1.0, brn, ϵ]
+
 
 @time episize!(prob, p, n);
 @time sinfepisize!(probsinf, psinf, n);
