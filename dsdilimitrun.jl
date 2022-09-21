@@ -24,7 +24,7 @@ display(plot(I_range, epiresultI, label=L"Epidemic size of $d_{I}$ as $d_{S} \ri
 #title!(L"Epidemic size of $d_{S}$")
 xlabel!(L"\ln(d_{I})")
 ylabel!("Epidemic size")
-savefig("./output/case2/sinfepidi2.png")
+#savefig("./output/case2/sinfepidi2.png")
 
 # Test di to infinity
 ##  

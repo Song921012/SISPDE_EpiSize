@@ -26,13 +26,17 @@ function ratio(x, η, ν)
     return y
 end
 prob = probgeneration!(ratio, γ, initS, initI, dx)
-η = 0.3
-ν = 0.9
-p = [1.0, exp(10.0), η, ν]
+η = 0.1
+ν = 4.0
+p = [exp(10.0), exp(10.0), η, ν]
 
 @time episize!(prob, p, n);
 Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
 vartype = "S"
+@time epiresultI = episingle!(prob, vartype, Ilim, p, n);
+plotdI(Ilim, epiresultI, vartype)
+
+vartype = "I"
 @time epiresultI = episingle!(prob, vartype, Ilim, p, n);
 plotdI(Ilim, epiresultI, vartype)
 ##
@@ -48,19 +52,41 @@ plotdI(Ilim, epiresultI, vartype)
 ##
 # Test
 # Level Set of (dS,dI)
-Ilim = Dict("min" => -10, "max" => 10.0, "len" => 100)
-Slim = Dict("min" => -6, "max" => -4, "len" => 100)
+η = 0.1
+ν = 4.0
+p = [exp(10.0),1.0, η, ν]
+Ilim = Dict("min" => -10, "max" => 10, "len" => 100)
+Slim = Dict("min" => -10, "max" => 10, "len" => 100)
 leveltype = "SI"
 @time epiresultSI = levelset(prob, leveltype, Slim, Ilim, p, n);
 #@save "./output/case2/levelsi2.bson" epiresultSI
 I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
 S_range = range(Slim["min"], Slim["max"], length=Slim["len"])
-nlevels = 100
+nlevels = [0.1865614,0.2060475,0.2255336,0.2308393,0.2328650,0.2429940,0.1475892,0.1378461,0.1315759,0.1295501,0.1275243,0.1254985, 0.1113180,0.0667508]#,0.0647250] # η = 0.3 ν = 0.9 si3
+contour(I_range, S_range, epiresultSI, lw=3,levels=nlevels, contour_labels=true)
+xlabel!(L"\ln(d_{I})")
+ylabel!(L"\ln(d_{S})")
+title!(L"Level set of $(d_{S},d_{I})$")
+savefig("./output/case2/levelsi4.png")
+##
+# Test
+# Level Set of (dS,dI)
+η = 0.3
+ν = 0.9
+p = [exp(10.0),1.0, η, ν]
+Ilim = Dict("min" => -10, "max" => 10.0, "len" => 100)
+Slim = Dict("min" => -10, "max" => 10, "len" => 100)
+leveltype = "SI"
+@time epiresultSI = levelset(prob, leveltype, Slim, Ilim, p, n);
+#@save "./output/case2/levelsi2.bson" epiresultSI
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+S_range = range(Slim["min"], Slim["max"], length=Slim["len"])
+nlevels = [0.412602,0.414626,0.418039,0.419987,0.428799,0.429724,0.430021,0.430247,0.439462,0.449200,0.447252,0.452285,0.451070] # η = 0.3 ν = 0.9 si3
 contour(I_range, S_range, epiresultSI, levels=nlevels, contour_labels=true)
 xlabel!(L"\ln(d_{I})")
 ylabel!(L"\ln(d_{S})")
 title!(L"Level set of $(d_{S},d_{I})$")
-#savefig("./output/case2/levelsi2.png")
+savefig("./output/case2/levelsi3.png")
 ##
 # Level Set of (dS,dI)
 Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)

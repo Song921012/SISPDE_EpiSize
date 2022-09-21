@@ -60,6 +60,9 @@ xlabel!(L"\ln(d_{I})")
 ylabel!(L"\ln(d_{S})")
 title!(L"Level set of $(d_{S},d_{I})$")
 #savefig("./output/case2/levelsi2.png")
+
+
+
 ##
 # ds to infinity
 brn = 3.0
@@ -151,9 +154,6 @@ ylabel!(L"\ln(d_{S})")
 title!(L"Level set of $(d_{S},d_{I})$")
 #savefig("./output/case1/levelsi1.png")
 
-
-using PackageCompiler
-create_sysimage([:DifferentialEquations, :Plots, :Symbolics, :ModelingToolkit, :Integrals, :SciMLSensitivity, :MethodOfLines, :NonlinearSolve], sysimage_path="JuliaSysimage.dll", precompile_execution_file="./src/functions.jl")
 
 
 ##
