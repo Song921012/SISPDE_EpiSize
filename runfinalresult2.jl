@@ -1,5 +1,5 @@
 ##
-include("./src/functions.jl")
+@time include("./src/functions.jl")
 path = "./output/case2/"
 case = 2
 

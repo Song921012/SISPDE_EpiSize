@@ -3,3 +3,4 @@ Manifest.toml
 LocalPreferences.toml
 *.pdf
 *.dll
+*.so
