@@ -50,7 +50,7 @@ Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
 vartype = "I"
 @time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
 I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
-plot(I_range, epiresultI, label=L"Epidemic size of $d_{I}$ as $d_{S} \rightarrow \infty$")
+plot(I_range, epiresultI, lw=3,foreground_color_legend = nothing,label=L"Epidemic size of $d_{I}$ as $d_{S} \rightarrow \infty$")
 #title!(L"Epidemic size of $d_{S}$")
 xlabel!(L"\ln(d_{I})")
 ylabel!("Epidemic size")
@@ -78,7 +78,7 @@ Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 100)
 vartype = "fixtS"
 @time epiresultI = episingle!(prob, vartype, Ilim, p, n);
 I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
-plot(I_range, epiresultI, label="Epidemic size")
+plot(I_range, epiresultI,lw=3,foreground_color_legend = nothing, label="Epidemic size")
 #title!(L"Epidemic size of $d_{S}$")
 xlabel!(L"\ln(d_{I})")
 ylabel!("Epidemic size")
