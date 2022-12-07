@@ -125,22 +125,6 @@ ylabel!("Epidemic size")
 savefig("./output/case2/iinfepidi2.png")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 
 # Case one
 function γ(x)
@@ -263,3 +247,84 @@ xlabel!(L"\ln(d_{S})")
 ylabel!("Epidemic size")
 savefig("./output/case1/iinfepids.png")
 
+
+
+
+# beta and gamma are constants
+# di goes to infinity
+##  
+function γ(x)
+    y = 1+x
+    return y
+end
+function ratio(x, η, ν)
+    y = 1+ (η+ν)/γ(x)
+    return y
+end
+probiinf = iinfprobgeneration!(ratio, γ, initI, dx)
+η = 0.3
+ν = 1.5
+piinf = [1.0, ν, η]
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "S"
+@time epiresultI = iinfepisingle!(probiinf, vartype, Ilim, piinf, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+
+display(plot(I_range, epiresultI,lw=3,foreground_color_legend = nothing, label=L"Epidemic size of $d_{S}$ as $d_{I} \rightarrow \infty$" ))
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"\ln(d_{S})")
+ylabel!("Epidemic size")
+savefig("./output/case4/iinfepidi4.png")
+
+
+
+# ds to infinity
+##
+function γ(x)
+    y = 1.0
+    return y
+end
+function ratio(x, brn, ϵ)
+    y = brn + ϵ * (1.0+x)
+    return y
+end
+probsinf = sinfprobgeneration!(ratio, γ, initS, dx)
+brn = 3.0
+ϵ = 2.0
+piinf = [1.0, brn, ϵ]
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "I"
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+display(plot(I_range, epiresultI, lw=3,foreground_color_legend = nothing,label=L"Epidemic size of $d_{I}$ as $d_{S} \rightarrow \infty$"))
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"\ln(d_{I})")
+ylabel!("Epidemic size")
+savefig("./output/case1/sinfepidi6.png")
+
+
+
+# di to infinity test monotonocity
+##  
+function γ(x)
+    y = 1.0
+    return y
+end
+function ratio(x, η, ν)
+    y = brn+ ϵ*(sin(x)+exp(sin(x)))
+    return y
+end
+probiinf = iinfprobgeneration!(ratio, γ, initI, dx)
+η = brn
+ν = ϵ
+piinf = [1.0, brn, ϵ]
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "S"
+@time epiresultI = iinfepisingle!(probiinf, vartype, Ilim, piinf, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+
+display(plot(I_range, epiresultI,lw=3,foreground_color_legend = nothing, label=L"Epidemic size of $d_{S}$ as $d_{I} \rightarrow \infty$" ))
+#title!(L"Epidemic size of $d_{S}$")
+xlabel!(L"\ln(d_{S})")
+ylabel!("Epidemic size")
+savefig("./output/case1/iinfepidi6.png")

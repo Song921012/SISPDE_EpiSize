@@ -213,3 +213,40 @@ plot(I_range, epiresultI, label=L"Epidemic size of $d_{I}$ as $d_{S} \rightarrow
 xlabel!(L"\ln(d_{I})")
 ylabel!("Epidemic size")
 savefig("./output/case1/sinfepidi.png")
+
+
+
+
+## 
+# 20221207 Eq2.25
+function γ(x)
+    y = 1.0
+    return y
+end
+function initS(x)
+    y = 0.9 + 0.1 * sin(2 * pi * x)
+    return y
+end
+function initI(x)
+    y = 0.1 + 0.1 * cos(2 * pi * x)
+    return y
+end
+dx = 0.05
+n = 20
+
+function ratio(x, brn, ϵ)
+    y = brn + ϵ * (10+x)
+    return y
+end
+prob = probgeneration!(ratio, γ, initS, initI, dx)
+brn = 3.0
+ϵ = 0.1
+p = [10.0, 1.0, brn, ϵ]
+psinf = [1.0, brn, ϵ]
+piinf = [1.0, brn, ϵ]
+
+@time episize!(prob, p, n);
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "I"
+@time epiresultI = episingle!(prob, vartype, Ilim, p, n);
+display(plotdI(Ilim, epiresultI, vartype))
