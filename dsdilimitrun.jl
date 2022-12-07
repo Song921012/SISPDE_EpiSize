@@ -99,7 +99,7 @@ display(plot(I_range, epiresultI))
 #title!(L"Epidemic size of $d_{S}$")
 xlabel!(L"\ln(d_{S})")
 ylabel!("Epidemic size")
-savefig("./output/case1/iinfepidi4.png")
+savefig("./output/case1/iinfepidi7.png")
 
 ##  
 function γ(x)
@@ -250,7 +250,7 @@ savefig("./output/case1/iinfepids.png")
 
 
 
-# beta and gamma are constants
+# betagamma are constants
 # di goes to infinity
 ##  
 function γ(x)

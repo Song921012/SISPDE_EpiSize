@@ -82,7 +82,7 @@ leveltype = "SI"
 I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
 S_range = range(Slim["min"], Slim["max"], length=Slim["len"])
 nlevels = [0.412602,0.414626,0.418039,0.419987,0.428799,0.429724,0.430021,0.430247,0.439462,0.449200,0.447252,0.452285,0.451070] # η = 0.3 ν = 0.9 si3
-contour(I_range, S_range, epiresultSI, levels=nlevels, contour_labels=true)
+contour(I_range, S_range, epiresultSI, lw=3,levels=nlevels, contour_labels=true)
 xlabel!(L"\ln(d_{I})")
 ylabel!(L"\ln(d_{S})")
 title!(L"Level set of $(d_{S},d_{I})$")
