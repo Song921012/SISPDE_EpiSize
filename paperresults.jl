@@ -409,7 +409,7 @@ contour(I_range, S_range, epiresultSI, lw=3,levels=nlevels, contour_labels=true)
 xlabel!(L"\ln(d_{I})")
 ylabel!(L"\ln(d_{S})")
 title!(L"Level set of $(d_{S},d_{I})$")
-savefig("./output/case2/levelsi4.png")
+savefig("./output/levelsi4.png")
 η = 0.3
 ν = 0.9
 p = [exp(10.0),1.0, η, ν]
@@ -424,4 +424,4 @@ contour(I_range, S_range, epiresultSI, lw=3,levels=nlevels, contour_labels=true)
 xlabel!(L"\ln(d_{I})")
 ylabel!(L"\ln(d_{S})")
 title!(L"Level set of $(d_{S},d_{I})$")
-savefig("./output/case2/levelsi3.png")
+savefig("./output/levelsi3.png")
