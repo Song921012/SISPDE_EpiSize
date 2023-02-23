@@ -193,6 +193,30 @@ savefig("./output/dSmon.png")
 # ds to infinity
 ##
 function γ(x)
+    y = 1.0+0.1*x+exp(1.0*cos(2*pi*x))
+    return y
+end
+function ratio(x, brn, ϵ)
+    y = 1+ (brn+ϵ)/γ(x)
+    return y
+end
+probsinf = sinfprobgeneration!(ratio, γ, initS, dx)
+brn = 1.0
+ϵ = 0.5
+piinf = [1.0, brn, ϵ]
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 50)
+vartype = "I"
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+display(plot(I_range, epiresultI, lw=3,foreground_color_legend = nothing,label=L"disease prevalence of $d_{I}$ as $d_{S} \rightarrow \infty$"))
+#title!(L"disease prevalence of $d_{S}$")
+xlabel!(L"\ln(d_{I})")
+ylabel!("disease prevalence")
+savefig("./output/sinfepidi9.png")
+
+
+##
+function γ(x)
     y = 1.0+x
     return y
 end
