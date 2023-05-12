@@ -372,7 +372,58 @@ ylabel!("disease prevalence")
 savefig("./output/dSmonchange3.png")
 
 
+##
+# Case three
+function γ(x)
+    y = 1.0
+    return y
+end
+function initS(x)
+    y = 0.9 + 0.1 * sin(2 * pi * x)
+    return y
+end
+function initI(x)
+    y = 0.1 + 0.1 * cos(2 * pi * x)
+    return y
+end
+dx = 0.05
+n = 20
 
+function ratio(x, brn, ϵ)
+    y = brn + ϵ * (sin(2 * pi * x)+sin(4 * pi * x)+sin(6 * pi * x)+1.0-x^2)
+    return y
+end
+prob = probgeneration!(ratio, γ, initS, initI, dx)
+probsinf = sinfprobgeneration!(ratio, γ, initI, dx)
+probiinf = iinfprobgeneration!(ratio, γ, initS, dx)
+brn = 3.0
+ϵ = 2.0
+p = [1.0, 1.0, brn, ϵ]
+psinf = [1.0, brn, ϵ]
+piinf = [1.0, brn, ϵ]
+
+@time episize!(prob, p, n);
+@time sinfepisize!(probsinf, psinf, n);
+@time iinfepisize!(probiinf, piinf, n);
+Ilim = Dict("min" => -5.0, "max" => 5.0, "len" => 50)
+vartype = "I"
+@time epiresultI = episingle!(prob, vartype, Ilim, p, n);
+display(plotdI(Ilim, epiresultI, vartype))
+@time epiresultI = sinfepisingle!(probsinf, vartype, Ilim, psinf, n);
+display(plotdI(Ilim, epiresultI, vartype))
+vartype = "S"
+@time epiresultI = iinfepisingle!(probiinf, vartype, Ilim, piinf, n);
+display(plotdI(Ilim, epiresultI, vartype))
+p = [0.1, 1.0, brn, ϵ]
+Ilim = Dict("min" => -10.0, "max" => 10.0, "len" => 100)
+vartype = "fixtS"
+@time epiresultI = episingle!(prob, vartype, Ilim, p, n);
+I_range = range(Ilim["min"], Ilim["max"], length=Ilim["len"])
+plot(I_range, epiresultI, lw=3, foreground_color_legend=nothing, label="disease prevalence")
+#title!(L"disease prevalence of $d_{S}$")
+xlabel!(L"\ln(d_{I})")
+display(ylabel!("disease prevalence"))
+savefig("./output/dSmonchange2.png")
 # level set
 
 ##
