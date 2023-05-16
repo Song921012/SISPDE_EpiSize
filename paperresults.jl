@@ -487,7 +487,7 @@ nlevels = [0.1865614, 0.2060475, 0.2255336, 0.2308393, 0.2328650, 0.2429940, 0.1
 contour(I_range, S_range, epiresultSI, lw=3, levels=nlevels, contour_labels=true)
 xlabel!(L"\ln(d_{I})")
 ylabel!(L"\ln(d_{S})")
-title!("Level set of disease prevalence")
+title!(L"Level set of  ${\int}_{\Omega}I$")
 savefig("./output/reviselevelsi4.png")
 η = 0.3
 ν = 0.9
@@ -502,5 +502,5 @@ nlevels = [0.412602, 0.414626, 0.418039, 0.419987, 0.428799, 0.429724, 0.430021,
 contour(I_range, S_range, epiresultSI, lw=3, levels=nlevels, contour_labels=true)
 xlabel!(L"\ln(d_{I})")
 ylabel!(L"\ln(d_{S})")
-title!("Level set of disease prevalence")
+title!(L"Level set of ${\int}_{\Omega}I$")
 savefig("./output/reviselevelsi3.png")
